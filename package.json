@@ -1,0 +1,29 @@
+{
+  "name": "eatjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "eat": "./bin/eat.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "npm build && node dist/bin/cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yangsnapify/eatjs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yangsnapify/eatjs/issues"
+  },
+  "homepage": "https://github.com/yangsnapify/eatjs#readme",
+  "dependencies": {
+    "commander": "^14.0.0",
+    "fs": "^0.0.1-security"
+  }
+}
