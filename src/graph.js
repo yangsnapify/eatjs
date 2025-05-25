@@ -15,23 +15,27 @@ function resolver(entry) {
     };
 }
 
-function buildGraph(entry, graph = new Map()) {
-    const absoluteEntry = path.resolve(entry);
+const graph = new Map()
+
+function buildGraph(entry) {
+    const absoluteEntry = path.resolve(path.dirname(entry), entry);
     if (graph.has(absoluteEntry)) return;
     const result = resolver(absoluteEntry);
     graph.set(absoluteEntry, result);
 
     for (const relativeImport of result.deps) {
         const depPath = path.resolve(path.dirname(absoluteEntry), relativeImport);
-        buildGraph(depPath, graph);
+        buildGraph(depPath);
     }
-
-    return graph;
 }
 
-const graph = buildGraph(testPath);
+buildGraph(testPath)
 
 for (const [key, val] of graph.entries()) {
     console.log(`\n ${key}`);
     console.log(val.deps);
+}
+
+export {
+    buildGraph
 }

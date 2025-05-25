@@ -1,5 +1,5 @@
 export function extractImports(code) {
-    const importRegex = /import\s+(?:[^'"]*?\s+from\s+)?['"](.+?)['"]/;
+    const importRegex = /import\s+(?:[^'"]*?\s+from\s+)?['"](.+?)['"]/g;
     const deps = [];
     let match;
     while ((match = importRegex.exec(code)) !== null) {
