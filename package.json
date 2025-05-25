@@ -24,7 +24,6 @@
   "homepage": "https://github.com/yangsnapify/eatjs#readme",
   "dependencies": {
     "commander": "^14.0.0",
-    "es-module-lexer": "^1.7.0",
     "fs": "^0.0.1-security",
     "path": "^0.12.7"
   }

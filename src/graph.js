@@ -1,50 +1,37 @@
-import fs from 'fs'
-import path from 'path'
-import { extractImports } from './utils.js'
-import { dirname } from 'path';
-import { init, parse } from 'es-module-lexer'
+import fs from 'fs';
+import path from 'path';
+import { extractImports } from './utils.js';
 
-const testPath = "./test1.js"
+const testPath = path.resolve('./test/index.js');
 
-function parse(entry) {
-    const entryPath = path.resolve(dirname(entry))
-    const code = fs.readFileSync(entryPath, 'utf-8')
+function resolver(entry) {
+    const entryPath = path.resolve(entry);
+    const code = fs.readFileSync(entryPath, 'utf-8');
     const deps = extractImports(code);
-
     return {
         deps,
         code,
-        entryPath
-    }
+        entryPath,
+    };
 }
 
-async function buildGraph(entry) {
-    await init
-    const graph = {}
-    const visited = new Set()
+function buildGraph(entry, graph = new Map()) {
+    const absoluteEntry = path.resolve(entry);
+    if (graph.has(absoluteEntry)) return;
+    const result = resolver(absoluteEntry);
+    graph.set(absoluteEntry, result);
 
-    async function walk(filepath) {
-        const absPath = path.resolve(filepath)
-        if (visited.has(absPath)) return
-        visited.add(absPath)
-
-        const code = fs.readFileSync(absPath, 'utf-8')
-        const [imports] = parse(code)
-
-        const deps = imports.map((i) => {
-            return path.resolve(path.dirname(absPath), code.slice(i.s, i.e))
-        })
-
-        graph[absPath] = deps
-
-        for (const dep of deps) {
-            await walk(dep)
-        }
+    for (const relativeImport of result.deps) {
+        const depPath = path.resolve(path.dirname(absoluteEntry), relativeImport);
+        buildGraph(depPath, graph);
     }
 
-    await walk(entry)
-
-    return graph
+    return graph;
 }
 
-buildGraph(testPath)
+const graph = buildGraph(testPath);
+
+for (const [key, val] of graph.entries()) {
+    console.log(`\n ${key}`);
+    console.log(val.deps);
+}
